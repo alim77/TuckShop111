@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <!-- Other head elements -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Supermarket</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Online Supermarket</h1>
+        <div class="user-details">
+            <input type="text" id="user-name" placeholder="Enter your name">
+            <input type="date" id="date">
+        </div>
+        <div class="content">
+            <div class="product-list">
+                <div class="product">
+                    <span class="product-name">Water</span>
+                    <span class="product-price">$15.00</span>
+                    <button onclick="addToCart('Water', 15.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Pepsi</span>
+                    <span class="product-price">$30.00</span>
+                    <button onclick="addToCart('Pepsi', 30.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Red Bull</span>
+                    <span class="product-price">$60.00</span>
+                    <button onclick="addToCart('Red Bull', 60.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Ships</span>
+                    <span class="product-price">$20.00</span>
+                    <button onclick="addToCart('Ships', 20.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Galaxy</span>
+                    <span class="product-price">$60.00</span>
+                    <button onclick="addToCart('Galaxy', 60.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Chupa Chups</span>
+                    <span class="product-price">$50.00</span>
+                    <button onclick="addToCart('Chupa Chups', 50.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Lollipop</span>
+                    <span class="product-price">$20.00</span>
+                    <button onclick="addToCart('Lollipop', 20.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Flutes & Oreo</span>
+                    <span class="product-price">$25.00</span>
+                    <button onclick="addToCart('Flutes & Oreo', 25.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">KitKat</span>
+                    <span class="product-price">$60.00</span>
+                    <button onclick="addToCart('KitKat', 60.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Kinder</span>
+                    <span class="product-price">$80.00</span>
+                    <button onclick="addToCart('Kinder', 80.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Kinder Egg</span>
+                    <span class="product-price">$80.00</span>
+                    <button onclick="addToCart('Kinder Egg', 80.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">M&Ms</span>
+                    <span class="product-price">$80.00</span>
+                    <button onclick="addToCart('M&Ms', 80.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Kinder Hippo</span>
+                    <span class="product-price">$30.00</span>
+                    <button onclick="addToCart('Kinder Hippo', 30.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">jawbreaker</span>
+                    <span class="product-price">$40.00</span>
+                    <button onclick="addToCart('jawbreaker', 40.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">pringles</span>
+                    <span class="product-price">$100.00</span>
+                    <button onclick="addToCart('pringles', 100.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Trident</span>
+                    <span class="product-price">$25.00</span>
+                    <button onclick="addToCart('Trident', 25.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Maxi</span>
+                    <span class="product-price">$25.00</span>
+                    <button onclick="addToCart('Maxi', 25.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Harribo</span>
+                    <span class="product-price">$40.00</span>
+                    <button onclick="addToCart('Harribo', 40.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Flaminco</span>
+                    <span class="product-price">$20.00</span>
+                    <button onclick="addToCart('Flaminco', 20.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Suntop</span>
+                    <span class="product-price">$30.00</span>
+                    <button onclick="addToCart('Suntop', 30.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Be Ready</span>
+                    <span class="product-price">$35.00</span>
+                    <button onclick="addToCart('Be Ready', 35.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Nutella</span>
+                    <span class="product-price">$100.00</span>
+                    <button onclick="addToCart('Nutella', 100.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Skittles</span>
+                    <span class="product-price">$40.00</span>
+                    <button onclick="addToCart('Skittles', 40.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Sour Bar</span>
+                    <span class="product-price">$35.00</span>
+                    <button onclick="addToCart('Sour Bar', 35.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Cotton & Pop</span>
+                    <span class="product-price">$40.00</span>
+                    <button onclick="addToCart('Cotton & Pop', 40.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Ahwa</span>
+                    <span class="product-price">$50.00</span>
+                    <button onclick="addToCart('Ahwa', 50.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Ice Cream</span>
+                    <span class="product-price">$100.00</span>
+                    <button onclick="addToCart('Ice Cream', 100.00)">Add to Cart</button>
+                </div>
+                <div class="product">
+                    <span class="product-name">Candy (per 100g)</span>
+                    <input type="number" id="custom-grams" placeholder="Grams">
+                    <button onclick="addCustomToCart()">Add to Cart</button>
+                </div>
+            <section class="add-product-section">
+                <h2>Add Product</h2>
+                <div>
+                    <label for="manual-product-name">Product Name:</label>
+                    <input type="text" id="manual-product-name" placeholder="Enter product name">
+                </div>
+                <div>
+                    <label for="manual-product-price">Product Price:</label>
+                    <input type="number" id="manual-product-price" placeholder="Enter product price">
+                </div>
+                <button onclick="addManualProduct()">Add Product</button>
+            </section>
+            </div>
+            <div class="cart">
+                <h2>Cart</h2>
+                <div id="cart-list" class="cart-list"></div>
+                <div class="total">
+                    <span>Total Price:</span>
+                    <span id="total-price">$0.00</span>
+                </div>
+                <div class="total-sold">
+                    <span>Total Products Sold:</span>
+                    <span id="total-products-sold">0</span>
+                </div>
+                <button class="checkout-button" onclick="checkout()">Checkout</button>
+                <button class="export-button" onclick="exportSalesData()">Export Sales Data</button>
+                <button onclick="resetData()">Reset Data</button>
+                </div>
+            <div id="sold-per-product"></div>
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
