@@ -158,18 +158,21 @@ function exportSalesData() {
     const wb = XLSX.utils.book_new();
     const ws_data = [["User Name", "Date", "Product", "Quantity", "Unit Price", "Total Price"]];
     let totalWater = 0;
+    let totalCandy = 0;
     let totalOtherProducts = 0;
     let totalPrice = 0;
 
     Object.keys(productSales).forEach(product => {
         const quantity = productSales[product].quantity;
-        const unitPrice = productSales[product].price;
-        const totalProductPrice = quantity * unitPrice;
+        const unitPrice = product === 'Candy' ? 0.8 : productSales[product].price; // Fixed unit price for Candy
+        const totalProductPrice = product === 'Candy' ? quantity * 0.8 : quantity * unitPrice; // Total price for Candy using fixed unit price
 
-        ws_data.push([userName, date, product, quantity, unitPrice.toFixed(2), totalProductPrice.toFixed(2)]);
+        ws_data.push([userName, date, product, product === 'Candy' ? `${quantity}g` : quantity, unitPrice.toFixed(2), totalProductPrice.toFixed(2)]);
 
         if (product === 'Water') {
             totalWater += totalProductPrice;
+        } else if (product === 'Candy') {
+            totalCandy += totalProductPrice;
         } else {
             totalOtherProducts += totalProductPrice;
         }
@@ -178,9 +181,10 @@ function exportSalesData() {
     });
 
     ws_data.push([]);
-    ws_data.push(["", "", "Total Water Sales", totalWater.toFixed(2)]);
-    ws_data.push(["", "", "Total Other Product Sales", totalOtherProducts.toFixed(2)]);
-    ws_data.push(["", "", "Total Sales", totalPrice.toFixed(2)]);
+    ws_data.push(["", "", "Total Water Sales", "", "", totalWater.toFixed(2)]);
+    ws_data.push(["", "", "Total Candy Sales", "", "", totalCandy.toFixed(2)]);
+    ws_data.push(["", "", "Total Other Product Sales", "", "", totalOtherProducts.toFixed(2)]);
+    ws_data.push(["", "", "Total Sales", "", "", totalPrice.toFixed(2)]);
 
     const ws = XLSX.utils.aoa_to_sheet(ws_data);
     XLSX.utils.book_append_sheet(wb, ws, "Sales Data");
