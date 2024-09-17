@@ -1,16 +1,65 @@
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-let totalSold = parseInt(localStorage.getItem('totalSold')) || 0;
-let productSales = JSON.parse(localStorage.getItem('productSales')) || {};
+// Utility functions for cookies
+function setCookie(name, value, days) {
+    let expires = '';
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = `; expires=${date.toUTCString()}`;
+    }
+    document.cookie = `${name}=${(value || '')}${expires}; path=/`;
+}
 
+function getCookie(name) {
+    const nameEQ = `${name}=`;
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    document.cookie = `${name}=; Max-Age=-99999999;`;
+}
+
+// Save data to cookies
+function saveDataToCookies() {
+    setCookie('cart', JSON.stringify(cart), 7); // Save cart for 7 days
+    setCookie('totalSold', totalSold, 7); // Save totalSold for 7 days
+    setCookie('productSales', JSON.stringify(productSales), 7); // Save productSales for 7 days
+}
+
+// Load data from cookies
+function loadDataFromCookies() {
+    cart = JSON.parse(getCookie('cart')) || [];
+    totalSold = parseInt(getCookie('totalSold')) || 0;
+    productSales = JSON.parse(getCookie('productSales')) || {};
+    updateCart();
+}
+
+// Add/Remove Product Functions
 function addToCart(product, price) {
-    cart.push({ product, price });
+    console.log(`Adding to cart: ${product} at $${price}`);
+    const cartItem = cart.find(item => item.product === product);
+    if (cartItem) {
+        console.log(`Updating existing item: ${product}`);
+        cartItem.quantity += 1;
+        cartItem.totalPrice += price;
+    } else {
+        console.log(`Adding new item: ${product}`);
+        cart.push({ product, price, quantity: 1, totalPrice: price });
+    }
     totalSold++;
     if (!productSales[product]) {
-        productSales[product] = { quantity: 0, price: price };
+        productSales[product] = { product, quantity: 0, price: price };
     }
     productSales[product].quantity++;
+    console.log('Cart:', cart);
+    console.log('Product Sales:', productSales);
     updateCart();
-    saveDataToLocalStorage();
+    saveDataToCookies(); // Save to cookies
 }
 
 function addCustomToCart() {
@@ -21,14 +70,22 @@ function addCustomToCart() {
     }
     const price = (grams / 100) * 80;
     const product = 'Candy';
-    cart.push({ product, price, grams });
+
+    const cartItem = cart.find(item => item.product === product);
+    if (cartItem) {
+        cartItem.grams += grams;
+        cartItem.totalPrice += price;
+    } else {
+        cart.push({ product, price, grams, quantity: 1, totalPrice: price });
+    }
+
     totalSold++;
     if (!productSales[product]) {
-        productSales[product] = { quantity: 0, grams: 0, price: price };
+        productSales[product] = { product, quantity: 0, grams: 0, price: price };
     }
     productSales[product].quantity += grams;
     updateCart();
-    saveDataToLocalStorage();
+    saveDataToCookies(); // Save to cookies
 
     document.getElementById('custom-grams').value = '';
 }
@@ -37,7 +94,12 @@ function removeFromCart(productName) {
     const cartIndex = cart.findIndex(item => item.product === productName);
     if (cartIndex > -1) {
         const item = cart[cartIndex];
-        cart.splice(cartIndex, 1);
+        if (item.quantity > 1) {
+            item.quantity--;
+            item.totalPrice -= item.price;
+        } else {
+            cart.splice(cartIndex, 1);
+        }
         totalSold--;
 
         if (item.product === 'Candy') {
@@ -51,7 +113,7 @@ function removeFromCart(productName) {
         }
 
         updateCart();
-        saveDataToLocalStorage();
+        saveDataToCookies(); // Save to cookies
     } else {
         console.warn(`Item "${productName}" not found in cart.`);
     }
@@ -60,20 +122,27 @@ function removeFromCart(productName) {
 function addManualProduct() {
     const productName = document.getElementById('manual-product-name').value;
     const productPrice = parseFloat(document.getElementById('manual-product-price').value);
-    
+
     if (!productName || isNaN(productPrice) || productPrice <= 0) {
         alert('Please enter a valid product name and price');
         return;
     }
-    
-    cart.push({ product: productName, price: productPrice });
+
+    const cartItem = cart.find(item => item.product === productName);
+    if (cartItem) {
+        cartItem.quantity += 1;
+        cartItem.totalPrice += productPrice;
+    } else {
+        cart.push({ product: productName, price: productPrice, quantity: 1, totalPrice: productPrice });
+    }
+
     totalSold++;
     if (!productSales[productName]) {
-        productSales[productName] = { quantity: 0, price: productPrice };
+        productSales[productName] = { product: productName, quantity: 0, price: productPrice };
     }
     productSales[productName].quantity++;
     updateCart();
-    saveDataToLocalStorage();
+    saveDataToCookies(); // Save to cookies
 
     document.getElementById('manual-product-name').value = '';
     document.getElementById('manual-product-price').value = '';
@@ -87,14 +156,14 @@ function updateCart() {
         const cartItem = document.createElement('div');
         cartItem.className = 'cart-item';
         cartItem.setAttribute('data-product', item.product);
-        const displayPrice = item.product === 'Candy' ? `$${item.price.toFixed(2)} (${item.grams}g)` : `$${item.price.toFixed(2)}`;
+        const displayPrice = item.product === 'Candy' ? `$${item.totalPrice.toFixed(2)} (${item.grams}g)` : `$${item.totalPrice.toFixed(2)}`;
         cartItem.innerHTML = `
-            <span>${item.product}</span>
+            <span>${item.product} (${item.quantity})</span>
             <span>${displayPrice}</span>
             <button onclick="removeFromCart('${item.product}')">Remove</button>
         `;
         cartList.appendChild(cartItem);
-        totalPrice += item.price;
+        totalPrice += item.totalPrice;
     });
     document.getElementById('total-price').innerText = `$${totalPrice.toFixed(2)}`;
     document.getElementById('total-products-sold').innerText = totalSold;
@@ -117,7 +186,7 @@ function checkout() {
     cart = [];
     totalSold = 0;
     updateCart();
-    saveDataToLocalStorage();
+    saveDataToCookies(); // Save to cookies
 }
 
 function resetData() {
@@ -125,28 +194,25 @@ function resetData() {
     const correctPassword = 'tuckshop';
 
     if (enteredPassword === correctPassword) {
-        try {
-            localStorage.removeItem('cart');
-            localStorage.removeItem('totalSold');
-            localStorage.removeItem('productSales');
-            localStorage.removeItem('userData');
-            alert('Data has been reset successfully.');
-            location.reload();
-        } catch (error) {
-            console.error('Error resetting data:', error);
-            alert('An error occurred while resetting data.');
-        }
+        eraseCookie('cart');
+        eraseCookie('totalSold');
+        eraseCookie('productSales');
+
+        cart = [];
+        totalSold = 0;
+        productSales = {};
+        updateCart();
+        alert('Data has been reset successfully!');
+        location.reload();
     } else {
-        alert('Incorrect password. Reset action aborted.');
+        alert('Incorrect password. Data reset failed.');
     }
 }
 
-function saveDataToLocalStorage() {
-    localStorage.setItem('cart', JSON.stringify(cart));
-    localStorage.setItem('totalSold', totalSold.toString());
-    localStorage.setItem('productSales', JSON.stringify(productSales));
-}
-
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function () {
+    loadDataFromCookies(); // Load data from cookies
+});
 function exportSalesData() {
     const userName = document.getElementById('user-name').value;
     const date = document.getElementById('date').value;
@@ -191,6 +257,3 @@ function exportSalesData() {
 
     XLSX.writeFile(wb, "sales_data.xlsx");
 }
-
-// Initial render
-updateCart();
